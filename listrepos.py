@@ -1,4 +1,5 @@
 import requests
+import zipfile
 
 def get_repo_list(username, page):
     per_page = 100  # Número máximo de repositórios por página (limite da API)
@@ -9,9 +10,14 @@ def get_repo_list(username, page):
 
 def download_repo(repo_name, download_url):
     response = requests.get(download_url)
-    with open(repo_name, 'wb') as f:
+    with open(repo_name + ".zip", 'wb') as f:
         f.write(response.content)
     print(f"Repositório '{repo_name}' baixado com sucesso.")
+
+    # Descompacta o arquivo ZIP
+    with zipfile.ZipFile(repo_name + ".zip", 'r') as zip_ref:
+        zip_ref.extractall()
+    print(f"Repositório '{repo_name}' descompactado com sucesso.")
 
 while True:
     print("\nOpções:")
