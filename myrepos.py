@@ -1,6 +1,7 @@
 import requests
 import zipfile
 import io
+import subprocess
 
 def get_repo_list(username, page):
     per_page = 100  # Número máximo de repositórios por página (limite da API)
@@ -9,20 +10,13 @@ def get_repo_list(username, page):
     repos = response.json()
     return repos
 
-def download_repo(repo_name, download_url):
-    response = requests.get(download_url, stream=True)
-    if response.status_code == 200:
-        with open(repo_name + ".zip", 'wb') as f:
-            for chunk in response.iter_content(1024):
-                f.write(chunk)
-        print(f"Repositório '{repo_name}' baixado com sucesso.")
-
-        # Descompacta o arquivo ZIP
-        with zipfile.ZipFile(repo_name + ".zip", 'r') as zip_ref:
-            zip_ref.extractall(repo_name)
-        print(f"Repositório '{repo_name}' descompactado com sucesso.")
-    else:
-        print(f"Erro ao baixar o repositório '{repo_name}'. Status Code: {response.status_code}")
+def download_repo(repo_name, clone_url):
+    clone_command = f"git clone {clone_url} {repo_name}"
+    try:
+        subprocess.run(clone_command, shell=True, check=True)
+        print(f"Repositório '{repo_name}' clonado com sucesso.")
+    except subprocess.CalledProcessError as e:
+        print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
 
 # Obtém a lista de repositórios do usuário
 username = "Jeanpseven"
@@ -49,8 +43,8 @@ while True:
             if 0 <= repo_index < len(repos):
                 repo = repos[repo_index]
                 repo_name = repo['name']
-                repo_download_url = repo['clone_url'] + "/archive/master.zip"
-                download_repo(repo_name, repo_download_url)
+                repo_clone_url = repo['clone_url']
+                download_repo(repo_name, repo_clone_url)
             else:
                 print("Número de repositório inválido.")
         except ValueError:
