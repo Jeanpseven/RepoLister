@@ -2,6 +2,7 @@ import requests
 import zipfile
 import io
 import subprocess
+import os
 
 def get_repo_list(username, page):
     per_page = 100  # Número máximo de repositórios por página (limite da API)
@@ -11,12 +12,22 @@ def get_repo_list(username, page):
     return repos
 
 def download_repo(repo_name, clone_url):
-    clone_command = f"git clone {clone_url} {repo_name}"
-    try:
-        subprocess.run(clone_command, shell=True, check=True)
-        print(f"Repositório '{repo_name}' clonado com sucesso.")
-    except subprocess.CalledProcessError as e:
-        print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
+    if os.path.exists(repo_name):
+        try:
+            # Atualiza o repositório se ele já existe localmente
+            print(f"Repositório '{repo_name}' já existe. Atualizando...")
+            update_command = f"git -C {repo_name} pull"
+            subprocess.run(update_command, shell=True, check=True)
+            print(f"Repositório '{repo_name}' atualizado com sucesso.")
+        except subprocess.CalledProcessError as e:
+            print(f"Erro ao atualizar o repositório '{repo_name}'. Código de erro: {e.returncode}")
+    else:
+        clone_command = f"git clone {clone_url} {repo_name}"
+        try:
+            subprocess.run(clone_command, shell=True, check=True)
+            print(f"Repositório '{repo_name}' clonado com sucesso.")
+        except subprocess.CalledProcessError as e:
+            print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
 
 # Obtém a lista de repositórios do usuário
 username = "Jeanpseven"
