@@ -2,6 +2,7 @@ import requests
 import subprocess
 import os
 import shutil
+import sys
 
 def get_repo_list(username, page):
     per_page = 100
@@ -27,6 +28,16 @@ def download_repo(repo_name, clone_url):
     except subprocess.CalledProcessError as e:
         print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
 
+def update_script():
+    try:
+        print("Atualizando o script...")
+        subprocess.run("git pull", shell=True, check=True)
+        print("Script atualizado com sucesso.")
+        sys.exit(0)
+    except subprocess.CalledProcessError as e:
+        print(f"Erro ao atualizar o script. Código de erro: {e.returncode}")
+        sys.exit(1)
+
 # Obtém a lista de repositórios do usuário
 username = "Jeanpseven"
 page = 1
@@ -41,9 +52,10 @@ while True:
     print("\nOpções:")
     print("1. Baixar um repositório")
     print("2. Listar mais repositórios")
-    print("3. Sair")
+    print("3. Atualizar o script")
+    print("4. Sair")
 
-    choice = input("Escolha uma opção (1/2/3): ")
+    choice = input("Escolha uma opção (1/2/3/4): ")
 
     if choice == '1':
         repo_number = input("Digite o número do repositório para baixar: ")
@@ -67,6 +79,9 @@ while True:
             page -= 1
 
     elif choice == '3':
+        update_script()
+
+    elif choice == '4':
         break
 
     else:
