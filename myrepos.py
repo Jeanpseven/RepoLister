@@ -1,9 +1,10 @@
 import requests
 import subprocess
 import os
+import shutil
 
 def get_repo_list(username, page):
-    per_page = 100  # Número máximo de repositórios por página (limite da API)
+    per_page = 100
     url = f"https://api.github.com/users/{username}/repos?page={page}&per_page={per_page}"
     response = requests.get(url)
     repos = response.json()
@@ -12,20 +13,19 @@ def get_repo_list(username, page):
 def download_repo(repo_name, clone_url):
     if os.path.exists(repo_name):
         try:
-            # Atualiza o repositório se ele já existe localmente
-            print(f"Repositório '{repo_name}' já existe. Atualizando...")
-            update_command = f"git -C {repo_name} pull"
-            subprocess.run(update_command, shell=True, check=True)
-            print(f"Repositório '{repo_name}' atualizado com sucesso.")
-        except subprocess.CalledProcessError as e:
-            print(f"Erro ao atualizar o repositório '{repo_name}'. Código de erro: {e.returncode}")
-    else:
-        clone_command = f"git clone --force {clone_url} {repo_name}"
-        try:
-            subprocess.run(clone_command, shell=True, check=True)
-            print(f"Repositório '{repo_name}' clonado com sucesso.")
-        except subprocess.CalledProcessError as e:
-            print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
+            # Remove o diretório existente antes de clonar
+            print(f"Removendo diretório existente '{repo_name}'...")
+            shutil.rmtree(repo_name)
+        except Exception as e:
+            print(f"Erro ao remover diretório '{repo_name}': {e}")
+
+    # Agora, podemos prosseguir com o clone
+    clone_command = f"git clone {clone_url} {repo_name}"
+    try:
+        subprocess.run(clone_command, shell=True, check=True)
+        print(f"Repositório '{repo_name}' clonado com sucesso.")
+    except subprocess.CalledProcessError as e:
+        print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
 
 # Obtém a lista de repositórios do usuário
 username = "Jeanpseven"
