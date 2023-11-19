@@ -1,6 +1,4 @@
 import requests
-import zipfile
-import io
 import subprocess
 import os
 
@@ -22,7 +20,7 @@ def download_repo(repo_name, clone_url):
         except subprocess.CalledProcessError as e:
             print(f"Erro ao atualizar o repositório '{repo_name}'. Código de erro: {e.returncode}")
     else:
-        clone_command = f"git clone {clone_url} {repo_name}"
+        clone_command = f"git clone -f {clone_url} {repo_name}"
         try:
             subprocess.run(clone_command, shell=True, check=True)
             print(f"Repositório '{repo_name}' clonado com sucesso.")
