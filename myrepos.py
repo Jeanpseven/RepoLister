@@ -8,14 +8,27 @@ total_pages = 1  # Inicializa com 1 página
 current_page = 1
 historico_scripts = []  # Nova lista para armazenar scripts baixados
 
-def get_repo_list(username, page):
+def get_repo_list(username):
     per_page = 100
-    url = f"https://api.github.com/users/{username}/repos?page={page}&per_page={per_page}"
+    url = f"https://api.github.com/users/{username}/repos?page=1&per_page={per_page}"
     response = requests.get(url)
     repos = response.json()
     global total_pages
-    total_pages = (len(repos) // per_page) + 1
+    total_repos = response.headers.get('link')
+    if total_repos:
+        total_pages = int(total_repos[total_repos.find('page=')+5:total_repos.find('>; rel="last"')])
+    else:
+        total_pages = 1
     return repos
+
+def get_all_repos(username):
+    all_repos = []
+    for page in range(1, total_pages + 1):
+        url = f"https://api.github.com/users/{username}/repos?page={page}&per_page=100"
+        response = requests.get(url)
+        repos = response.json()
+        all_repos.extend(repos)
+    return all_repos
 
 def download_repo(repo_name, clone_url):
     if os.path.exists(repo_name):
@@ -50,11 +63,20 @@ def search_repos(repos, search_query):
     for repo in repos:
         if search_query.lower() in repo['name'].lower():
             results.append(repo)
+        else:
+            # Se o termo de pesquisa não estiver no nome do repositório,
+            # vamos buscar no conteúdo do README.md
+            readme_url = f"https://raw.githubusercontent.com/{repo['full_name']}/master/README.md"
+            readme_response = requests.get(readme_url)
+            if readme_response.status_code == 200:
+                readme_content = readme_response.text.lower()
+                if search_query.lower() in readme_content:
+                    results.append(repo)
     return results
 
 # Obtém a lista de repositórios do usuário
 username = "Jeanpseven"
-repos = get_repo_list(username, current_page)
+repos = get_repo_list(username)
 
 while True:
     # Exibe a lista numerada de repositórios
@@ -67,7 +89,7 @@ while True:
     print("2. Listar mais repositórios")
     print("3. Pesquisar repositórios")
     print("4. Atualizar o script")
-    print("5. Mostrar histórico de compras e sair")
+    print("5. Sair")
 
     choice = input("Escolha uma opção (1/2/3/4/5): ")
 
@@ -88,7 +110,7 @@ while True:
     elif choice == '2':
         if current_page < total_pages:
             current_page += 1
-            repos = get_repo_list(username, current_page)
+            repos = get_all_repos(username)
         else:
             print("Não há mais repositórios disponíveis.")
 
@@ -96,9 +118,9 @@ while True:
         search_query = input("Digite o termo de pesquisa: ")
         search_results = search_repos(repos, search_query)
         if search_results:
-            print("Resultados da pesquisa:")
-            for index, repo in enumerate(search_results, start=1):
-                print(f"{index}. {repo['name']}")
+            print("\nResultados da pesquisa:")
+            for repo in search_results:
+                print(f"- {repo['name']}")
         else:
             print("Nenhum resultado encontrado.")
 
@@ -111,18 +133,7 @@ while True:
             print(f"• {script}")
 
         print("\nVolte sempre! Obrigado pela preferência.\n")
-        print("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
-        print("⠀⠈⠛⠻⠶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⠀⢸⡇⠀⠀⠀⠀⣿⠀⠀⢠⡿⠀⠀⠀⠀⠀⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣷⠤⠼⠷⠤⠤⠤⠤⠿⠦⠤⠾⠃⠀⠀⠀⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠀⠀⢀⣾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠀⠀⢾⣷⢶⣶⠶⠶⠶⠶⠶⠶⣶⠶⣶⡶⠀⠀⠀⠀⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠀⠸⣧⣠⡿⠀⠀⠀⠀⠀⠀⢷⣄⣼⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
-        print("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
         sys.exit(0)
 
     else:
-        print("Opção inválida. Por favor, tente novamente")
+        print("Opção inválida. Por favor, tente novamente.")
