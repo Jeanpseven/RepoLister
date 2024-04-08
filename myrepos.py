@@ -117,14 +117,14 @@ while True:
             print("Não há mais repositórios disponíveis.")
 
     elif choice == '3':
-        search_query = input("Digite o termo de pesquisa: ")
-        search_results = search_repos(repos, search_query)
-        if search_results:
-            print("\nResultados da pesquisa:")
-            for repo in search_results:
-                print(f"- {repo['name']}")
-        else:
-            print("Nenhum resultado encontrado.")
+    search_query = input("Digite o termo de pesquisa: ")
+    search_results = search_repos(get_all_repos(username), search_query)
+    if search_results:
+        print("\nResultados da pesquisa:")
+        for index, repo in enumerate(search_results, start=1):
+            print(f"Página: {current_page}, Repositório: {index}. {repo['name']}")
+    else:
+        print("Nenhum resultado encontrado.")
 
     elif choice == '4':
         update_script()
