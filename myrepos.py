@@ -122,7 +122,7 @@ while True:
         if search_results:
             print("\nResultados da pesquisa:")
             for index, repo in enumerate(search_results, start=1):
-                print(f"Página: {current_page}, Repositório: {index}. {repo['name']}")
+                print(f"{index}. {repo['name']}")
         else:
             print("Nenhum resultado encontrado.") 
 
