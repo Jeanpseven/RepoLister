@@ -8,9 +8,9 @@ total_pages = 1  # Inicializa com 1 página
 current_page = 1
 historico_scripts = []  # Nova lista para armazenar scripts baixados
 
-def get_repo_list(username):
+def get_repo_list(username, page=1):
     per_page = 100
-    url = f"https://api.github.com/users/{username}/repos?page=1&per_page={per_page}"
+    url = f"https://api.github.com/users/{username}/repos?page={page}&per_page={per_page}"
     response = requests.get(url)
     repos = response.json()
     total_pages = 1
@@ -21,16 +21,6 @@ def get_repo_list(username):
             if 'rel="last"' in link:
                 total_pages = int(link[link.find('page=')+5:link.find('&')])
     return repos, total_pages
-
-def get_all_repos(username):
-    all_repos = []
-    repos, total_pages = get_repo_list(username)
-    for page in range(1, total_pages + 1):
-        url = f"https://api.github.com/users/{username}/repos?page={page}&per_page=100"
-        response = requests.get(url)
-        repos = response.json()
-        all_repos.extend(repos)
-    return all_repos, total_pages
 
 def download_repo(repo_name, clone_url):
     if os.path.exists(repo_name):
@@ -110,15 +100,19 @@ while True:
             print("Entrada inválida. Digite um número válido.")
 
     elif choice == '2':
-        if current_page < total_pages:
-            current_page += 1
-            repos, total_pages = get_all_repos(username)
-        else:
-            print("Não há mais repositórios disponíveis.")
+        page = current_page + 1
+        repos, total_pages = get_repo_list(username, page)
+        if not repos:
+            if current_page < total_pages:
+                current_page += 1
+                repos, total_pages = get_repo_list(username, current_page)
+            else:
+                print("Não há mais repositórios disponíveis.")
+                page -= 1
 
     elif choice == '3':
         search_query = input("Digite o termo de pesquisa: ")
-        search_results = search_repos(get_all_repos(username)[0], search_query)
+        search_results = search_repos(get_repo_list(username)[0], search_query)
         if search_results:
             print("\nResultados da pesquisa:")
             for index, repo in enumerate(search_results, start=1):
