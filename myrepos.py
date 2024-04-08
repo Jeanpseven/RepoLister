@@ -4,10 +4,6 @@ import os
 import shutil
 import sys
 
-total_pages = 1  # Inicializa com 1 página
-current_page = 1
-historico_scripts = []  # Nova lista para armazenar scripts baixados
-
 def get_repo_list(username, page=1):
     per_page = 100
     url = f"https://api.github.com/users/{username}/repos?page={page}&per_page={per_page}"
@@ -22,39 +18,32 @@ def get_repo_list(username, page=1):
                 total_pages = int(link[link.find('page=')+5:link.find('&')])
     return repos, total_pages
 
-def download_repo(repo_name, clone_url):
+def download_repo(username, repo_name, clone_url):
     if os.path.exists(repo_name):
         try:
-            # Remove o diretório existente antes de clonar
             print(f"Removendo diretório existente '{repo_name}'...")
             shutil.rmtree(repo_name)
         except Exception as e:
             print(f"Erro ao remover diretório '{repo_name}': {e}")
 
-    # Agora, podemos prosseguir com o clone
     clone_command = f"git clone {clone_url} {repo_name}"
     try:
         subprocess.run(clone_command, shell=True, check=True)
         print(f"Repositório '{repo_name}' clonado com sucesso.")
-        historico_scripts.append(repo_name)  # Adiciona ao histórico de scripts
+        return get_repo_list(username)  # Retorna para a função get_repo_list
     except subprocess.CalledProcessError as e:
         print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
+        return None, 0
 
-    # Retorna para a função get_repo_list
-    return get_repo_list(username, current_page)
-
-def update_script():
+def update_script(username):
     try:
         print("Atualizando o script...")
         subprocess.run("git pull", shell=True, check=True)
         print("Script atualizado com sucesso.")
-        sys.exit(0)
+        return get_repo_list(username)  # Retorna para a função get_repo_list
     except subprocess.CalledProcessError as e:
         print(f"Erro ao atualizar o script. Código de erro: {e.returncode}")
-        sys.exit(1)
-
-    # Retorna para a função get_repo_list
-    return get_repo_list(username, current_page)
+        return None, 0
 
 def search_repos(repos, search_query):
     results = []
@@ -62,8 +51,6 @@ def search_repos(repos, search_query):
         if search_query.lower() in repo['name'].lower():
             results.append(repo)
         else:
-            # Se o termo de pesquisa não estiver no nome do repositório,
-            # vamos buscar no conteúdo do README.md
             readme_url = f"https://raw.githubusercontent.com/{repo['full_name']}/master/README.md"
             readme_response = requests.get(readme_url)
             if readme_response.status_code == 200:
@@ -72,13 +59,11 @@ def search_repos(repos, search_query):
                     results.append(repo)
     return results
 
-# Obtém a lista de repositórios do usuário
 username = "Jeanpseven"
 repos, total_pages = get_repo_list(username)
 
 while True:
-    # Exibe a lista numerada de repositórios
-    print(f"Repositórios disponíveis para {username} (Página {current_page}/{total_pages}):")
+    print(f"Repositórios disponíveis para {username} (Página 1/{total_pages}):")
     for index, repo in enumerate(repos, start=1):
         print(f"{index}. {repo['name']}")
 
@@ -99,51 +84,35 @@ while True:
                 repo = repos[repo_index]
                 repo_name = repo['name']
                 repo_clone_url = repo['clone_url']
-                repos, total_pages = download_repo(repo_name, repo_clone_url)
+                repos, total_pages = download_repo(username, repo_name, repo_clone_url)
             else:
                 print("Número de repositório inválido.")
         except ValueError:
             print("Entrada inválida. Digite um número válido.")
 
     elif choice == '2':
-        page = current_page + 1
+        page = len(repos) // 100 + 1  # Calcula a próxima página
         if page <= total_pages:
-            current_page = page
-            repos, total_pages = get_repo_list(username, current_page)
+            repos, total_pages = get_repo_list(username, page)
         else:
             print("Não há mais repositórios disponíveis.")
 
     elif choice == '3':
         search_query = input("Digite o termo de pesquisa: ")
-        search_results = search_repos(get_repo_list(username)[0], search_query)
+        search_results = search_repos(repos, search_query)
         if search_results:
             print("\nResultados da pesquisa:")
             for index, repo in enumerate(search_results, start=1):
                 print(f"{index}. {repo['name']}")
         else:
-            print("Nenhum resultado encontrado.") 
+            print("Nenhum resultado encontrado.")
 
     elif choice == '4':
-        repos, total_pages = update_script()
+        repos, total_pages = update_script(username)
 
     elif choice == '5':
-        print("""
-        Histórico de Compras:
-        """)
-        for script in historico_scripts:
-            print(f"• {script}")
-        print("""
-⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠈⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⠀⢸⡇⠀⠀⠀⠀⣿⠀⠀⢠⡿⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢸⣷⠤⠼⠷⠤⠤⠤⠤⠿⠦⠤
-⠀⠀⠀⠀⠀⢀⣾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⢾⣷⢶⣶⠶⠶⠶⠶⠶⣶⠶⣶⡶⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠸⣧⣠⡿⠀⠀⠀⠀⠀⠀⢷⣄⣼⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-""")
-    sys.exit(0)
+        print("Saindo...")
+        break
 
-else:
-    print("Opção inválida. Por favor, tente novamente.")
+    else:
+        print("Opção inválida. Por favor, tente novamente.")
