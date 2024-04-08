@@ -61,6 +61,7 @@ def search_repos(repos, search_query):
 
 username = "Jeanpseven"
 repos, total_pages = get_repo_list(username)
+historico_scripts = []  # Inicializa o histórico de scripts
 
 while True:
     print(f"Repositórios disponíveis para {username} (Página 1/{total_pages}):")
