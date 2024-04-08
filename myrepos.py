@@ -124,7 +124,7 @@ elif choice == '3':
         for index, repo in enumerate(search_results, start=1):
             print(f"Página: {current_page}, Repositório: {index}. {repo['name']}")
     else:
-        print("Nenhum resultado encontrado.")
+        print("Nenhum resultado encontrado.") 
 
     elif choice == '4':
         update_script()
