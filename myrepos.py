@@ -13,16 +13,18 @@ def get_repo_list(username):
     url = f"https://api.github.com/users/{username}/repos?page=1&per_page={per_page}"
     response = requests.get(url)
     repos = response.json()
-    global total_pages
-    total_repos = response.headers.get('link')
-    if total_repos:
-        total_pages = int(total_repos[total_repos.find('page=')+5:total_repos.find('>; rel="last"')])
-    else:
-        total_pages = 1
-    return repos
+    total_pages = 1
+    link_header = response.headers.get('link')
+    if link_header:
+        links = link_header.split(',')
+        for link in links:
+            if 'rel="last"' in link:
+                total_pages = int(link[link.find('page=')+5:link.find('&')])
+    return repos, total_pages
 
 def get_all_repos(username):
     all_repos = []
+    repos, total_pages = get_repo_list(username)
     for page in range(1, total_pages + 1):
         url = f"https://api.github.com/users/{username}/repos?page={page}&per_page=100"
         response = requests.get(url)
@@ -76,7 +78,7 @@ def search_repos(repos, search_query):
 
 # Obtém a lista de repositórios do usuário
 username = "Jeanpseven"
-repos = get_repo_list(username)
+repos, total_pages = get_repo_list(username)
 
 while True:
     # Exibe a lista numerada de repositórios
@@ -128,12 +130,24 @@ while True:
         update_script()
 
     elif choice == '5':
-        print("\nHistórico de Compras:")
+        print("""
+        Histórico de Compras:
+        """)
         for script in historico_scripts:
             print(f"• {script}")
 
-        print("\nVolte sempre! Obrigado pela preferência.\n")
+        print("""
+        Volte sempre! Obrigado pela preferência.
+
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠈⠛⠻⠶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠈⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⠀⢸⡇⠀⠀⠀⠀⣿⠀⠀⢠⡿⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢸⣷⠤⠼⠷⠤⠤⠤⠤⠿⠦⠤⠾⠃⠀⠀⠀⠀⠀⠀
+""")
         sys.exit(0)
 
     else:
-        print("Opção inválida. Por favor, tente novamente.") 
+        print("Opção inválida. Por favor, tente novamente.")
