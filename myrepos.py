@@ -124,20 +124,19 @@ elif choice == '3':
         for index, repo in enumerate(search_results, start=1):
             print(f"Página: {current_page}, Repositório: {index}. {repo['name']}")
     else:
-        print("Nenhum resultado encontrado.") 
+        print("Nenhum resultado encontrado.")
 
-    elif choice == '4':
-        update_script()
+elif choice == '4':
+    update_script()
 
-    elif choice == '5':
-        print("""
-        Histórico de Compras:
-        """)
-        for script in historico_scripts:
-            print(f"• {script}")
-            print("""Volte Sempre! Obrigado pela preferência 
-
-⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
+elif choice == '5':
+    print("""
+    Histórico de Compras:
+    """)
+    for script in historico_scripts:
+        print(f"• {script}")
+    print("""
+⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠈⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⠀⢸⡇⠀⠀⠀⠀⣿⠀⠀⢠⡿⠀⠀⠀⠀⠀⠀⠀⠀
@@ -145,9 +144,9 @@ elif choice == '3':
 ⠀⠀⠀⠀⠀⢀⣾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⢾⣷⢶⣶⠶⠶⠶⠶⠶⠶⣶⠶⣶⡶⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠸⣧⣠⡿⠀⠀⠀⠀⠀⠀⢷⣄⣼⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 """)
-        sys.exit(0)
+    sys.exit(0)
 
-    else:
-        print("Opção inválida. Por favor, tente novamente.")
+else:
+    print("Opção inválida. Por favor, tente novamente.")
