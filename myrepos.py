@@ -109,7 +109,7 @@ while True:
         page = current_page + 1
         if page <= total_pages:
             current_page = page
-            repos, total_pages = get_repo_list(username, page)
+            repos, total_pages = get_repo_list(username, current_page)
         else:
             print("Não há mais repositórios disponíveis.")
 
