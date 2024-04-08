@@ -30,7 +30,7 @@ def get_all_repos(username):
         response = requests.get(url)
         repos = response.json()
         all_repos.extend(repos)
-    return all_repos
+    return all_repos, total_pages
 
 def download_repo(repo_name, clone_url):
     if os.path.exists(repo_name):
@@ -112,13 +112,13 @@ while True:
     elif choice == '2':
         if current_page < total_pages:
             current_page += 1
-            repos = get_all_repos(username)
+            repos, total_pages = get_all_repos(username)
         else:
             print("Não há mais repositórios disponíveis.")
 
     elif choice == '3':
         search_query = input("Digite o termo de pesquisa: ")
-        search_results = search_repos(get_all_repos(username), search_query)
+        search_results = search_repos(get_all_repos(username)[0], search_query)
         if search_results:
             print("\nResultados da pesquisa:")
             for index, repo in enumerate(search_results, start=1):
@@ -137,8 +137,8 @@ while True:
             print(f"• {script}")
         print("""
 ⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠈⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⡏⠉⠉⠉⠉⣿⠀⠀⠀⠀⠀
+      ⠀⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⠀⢸⡇⠀⠀⠀⠀⣿⠀⠀⢠⡿⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⢸⣷⠤⠼⠷⠤⠤⠤⠤⠿⠦⠤⠾
 ⠀⠀⠀⠀⠀⢀⣾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
