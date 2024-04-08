@@ -18,7 +18,7 @@ def get_repo_list(username, page=1):
                 total_pages = int(link[link.find('page=')+5:link.find('&')])
     return repos, total_pages
 
-def download_repo(username, repo_name, clone_url):
+def download_repo(username, repo_name, clone_url, historico_scripts):
     if os.path.exists(repo_name):
         try:
             print(f"Removendo diretório existente '{repo_name}'...")
@@ -30,6 +30,7 @@ def download_repo(username, repo_name, clone_url):
     try:
         subprocess.run(clone_command, shell=True, check=True)
         print(f"Repositório '{repo_name}' clonado com sucesso.")
+        historico_scripts.append(repo_name)  # Adiciona ao histórico de scripts
         return get_repo_list(username)  # Retorna para a função get_repo_list
     except subprocess.CalledProcessError as e:
         print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
@@ -85,7 +86,7 @@ while True:
                 repo = repos[repo_index]
                 repo_name = repo['name']
                 repo_clone_url = repo['clone_url']
-                repos, total_pages = download_repo(username, repo_name, repo_clone_url)
+                repos, total_pages = download_repo(username, repo_name, repo_clone_url, historico_scripts)
             else:
                 print("Número de repositório inválido.")
         except ValueError:
