@@ -110,37 +110,37 @@ while True:
             print("Entrada inválida. Digite um número válido.")
 
     elif choice == '2':
-    if current_page < total_pages:
-        current_page += 1
-        repos = get_all_repos(username)
-    else:
-        print("Não há mais repositórios disponíveis.")
+        if current_page < total_pages:
+            current_page += 1
+            repos = get_all_repos(username)
+        else:
+            print("Não há mais repositórios disponíveis.")
 
-elif choice == '3':
-    search_query = input("Digite o termo de pesquisa: ")
-    search_results = search_repos(get_all_repos(username), search_query)
-    if search_results:
-        print("\nResultados da pesquisa:")
-        for index, repo in enumerate(search_results, start=1):
-            print(f"Página: {current_page}, Repositório: {index}. {repo['name']}")
-    else:
-        print("Nenhum resultado encontrado.")
+    elif choice == '3':
+        search_query = input("Digite o termo de pesquisa: ")
+        search_results = search_repos(get_all_repos(username), search_query)
+        if search_results:
+            print("\nResultados da pesquisa:")
+            for index, repo in enumerate(search_results, start=1):
+                print(f"Página: {current_page}, Repositório: {index}. {repo['name']}")
+        else:
+            print("Nenhum resultado encontrado.") 
 
-elif choice == '4':
-    update_script()
+    elif choice == '4':
+        update_script()
 
-elif choice == '5':
-    print("""
-    Histórico de Compras:
-    """)
-    for script in historico_scripts:
-        print(f"• {script}")
-    print("""
+    elif choice == '5':
+        print("""
+        Histórico de Compras:
+        """)
+        for script in historico_scripts:
+            print(f"• {script}")
+        print("""
 ⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠈⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⠀⢸⡇⠀⠀⠀⠀⣿⠀⠀⢠⡿⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢸⣷⠤⠼⠷⠤⠤⠤⠤⠿⠦⠤⠾⠃⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢸⣷⠤⠼⠷⠤⠤⠤⠤⠿⠦⠤⠾
 ⠀⠀⠀⠀⠀⢀⣾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⢾⣷⢶⣶⠶⠶⠶⠶⠶⣶⠶⣶⡶⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠸⣧⣠⡿⠀⠀⠀⠀⠀⠀⢷⣄⣼⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
