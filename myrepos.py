@@ -40,6 +40,9 @@ def download_repo(repo_name, clone_url):
     except subprocess.CalledProcessError as e:
         print(f"Erro ao clonar o repositório '{repo_name}'. Código de erro: {e.returncode}")
 
+    # Retorna para a função get_repo_list
+    return get_repo_list(username, current_page)
+
 def update_script():
     try:
         print("Atualizando o script...")
@@ -49,6 +52,9 @@ def update_script():
     except subprocess.CalledProcessError as e:
         print(f"Erro ao atualizar o script. Código de erro: {e.returncode}")
         sys.exit(1)
+
+    # Retorna para a função get_repo_list
+    return get_repo_list(username, current_page)
 
 def search_repos(repos, search_query):
     results = []
@@ -93,9 +99,7 @@ while True:
                 repo = repos[repo_index]
                 repo_name = repo['name']
                 repo_clone_url = repo['clone_url']
-                download_repo(repo_name, repo_clone_url)
-                # Atualiza a lista de repositórios após o download
-                repos, total_pages = get_repo_list(username, current_page)
+                repos, total_pages = download_repo(repo_name, repo_clone_url)
             else:
                 print("Número de repositório inválido.")
         except ValueError:
@@ -103,14 +107,11 @@ while True:
 
     elif choice == '2':
         page = current_page + 1
-        repos, total_pages = get_repo_list(username, page)
-        if not repos:
-            if current_page < total_pages:
-                current_page += 1
-                repos, total_pages = get_repo_list(username, current_page)
-            else:
-                print("Não há mais repositórios disponíveis.")
-                page -= 1
+        if page <= total_pages:
+            current_page = page
+            repos, total_pages = get_repo_list(username, current_page)
+        else:
+            print("Não há mais repositórios disponíveis.")
 
     elif choice == '3':
         search_query = input("Digite o termo de pesquisa: ")
@@ -123,7 +124,7 @@ while True:
             print("Nenhum resultado encontrado.") 
 
     elif choice == '4':
-        update_script()
+        repos, total_pages = update_script()
 
     elif choice == '5':
         print("""
