@@ -94,6 +94,8 @@ while True:
                 repo_name = repo['name']
                 repo_clone_url = repo['clone_url']
                 download_repo(repo_name, repo_clone_url)
+                # Atualiza a lista de repositórios após o download
+                repos, total_pages = get_repo_list(username, current_page)
             else:
                 print("Número de repositório inválido.")
         except ValueError:
