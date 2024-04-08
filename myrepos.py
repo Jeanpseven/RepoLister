@@ -135,9 +135,7 @@ while True:
         """)
         for script in historico_scripts:
             print(f"• {script}")
-
-        elif choice == '5':
-    print("""Volte Sempre! Obrigado pela preferência 
+            print("""Volte Sempre! Obrigado pela preferência 
 
 ⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀
