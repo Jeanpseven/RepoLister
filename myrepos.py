@@ -125,4 +125,4 @@ while True:
         sys.exit(0)
 
     else:
-        print("Opção inválida. Por favor, tente novamente
+        print("Opção inválida. Por favor, tente novamente)
