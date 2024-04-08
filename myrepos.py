@@ -110,13 +110,13 @@ while True:
             print("Entrada inválida. Digite um número válido.")
 
     elif choice == '2':
-        if current_page < total_pages:
-            current_page += 1
-            repos = get_all_repos(username)
-        else:
-            print("Não há mais repositórios disponíveis.")
+    if current_page < total_pages:
+        current_page += 1
+        repos = get_all_repos(username)
+    else:
+        print("Não há mais repositórios disponíveis.")
 
-    elif choice == '3':
+elif choice == '3':
     search_query = input("Digite o termo de pesquisa: ")
     search_results = search_repos(get_all_repos(username), search_query)
     if search_results:
